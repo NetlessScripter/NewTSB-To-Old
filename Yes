@@ -17,8 +17,6 @@ camera.CameraType = Enum.CameraType.Scriptable
 StarterGui:SetCore("ResetButtonCallback", false)
 StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.All, false)
 
--- If you want storedRot for something, this looks a bit off — usually storedRot is a CFrame, 
--- but your code sets it to CFrame.new(Vector3.zero, lookVector), which creates a rotation looking toward lookVector from origin
 local storedRot = CFrame.new(Vector3.new(), humanoidRootPart.CFrame.LookVector)
 
 local url = "https://raw.githubusercontent.com/NetlessScripter/Miles-Morales/refs/heads/main/Newdc"
