@@ -1,0 +1,670 @@
+  local v23392 = v1101.Part and v1101.Part.CFrame or v1101.CFrame;
+                local l_v23392_0 = v23392;
+                local v23394 = {};
+                local _ = {};
+                local v23396 = {};
+                l_v23392_0 = l_v23392_0 + l_v23392_0.lookVector * 1.793;
+                local v23397 = v1101.Seed or math.random(1, 2000000000);
+                local v23398 = Random.new(v23397);
+                local l_v110_3 = v110;
+                local l_l_v110_3_0 = l_v110_3 --[[ copy: 11 -> 699 ]];
+                local l_v23398_0 = v23398 --[[ copy: 10 -> 700 ]];
+                local function v23404(v23402, v23403) --[[ Line: 48080 ]]
+                    -- upvalues: l_l_v110_3_0 (copy), l_v23398_0 (copy)
+                    return l_l_v110_3_0(v23402, v23403, nil, l_v23398_0);
+                end;
+                local l_Part_29 = Instance.new("Part");
+                l_Part_29.Anchored = true;
+                l_Part_29.Transparency = 1;
+                l_Part_29.CanCollide = false;
+                l_Part_29.CFrame = l_v23392_0;
+                l_Part_29.Parent = workspace.Thrown;
+                if not v1101.NoParticles then
+                    for _ = 1, 2 do
+                        v321({
+                            SoundId = "rbxassetid://7556019578", 
+                            Volume = 4, 
+                            Parent = l_Part_29, 
+                            RollOffMaxDistance = 455
+                        }):Play();
+                    end;
+                end;
+                v10:Create(l_Part_29, TweenInfo.new(0.75, Enum.EasingStyle.Linear, Enum.EasingDirection.Out), {
+                    CFrame = v23392 + l_v23392_0.lookVector * 75
+                }):Play();
+                game:GetService("Debris"):AddItem(l_Part_29, 6);
+                local v23407 = 1;
+                local v23408 = 20;
+                local v23409 = v1101.Times or 0;
+                for v23410 = v23407, v23408 + v23409 do
+                    for v23411 = 1, 2 do
+                        local v23412 = v1101.Spread or 2.25;
+                        if v23411 == 2 then
+                            v23412 = v23412 * -1;
+                        end;
+                        if v23411 == 1 and v23410 % 2 == 1 then
+                            local l_Attachment_17 = Instance.new("Attachment");
+                            l_Attachment_17.Parent = workspace.Terrain;
+                            l_Attachment_17.WorldCFrame = l_v23392_0 + l_v23392_0.lookVector * (v23410 * 3.6);
+                            l_Attachment_17.WorldCFrame = CFrame.new(l_Attachment_17.WorldCFrame.p, l_v23392_0.p);
+                            local v23414 = l_LegacyReplication_0.Push:Clone();
+                            v23414.Parent = l_Attachment_17;
+                            local v23415 = {};
+                            local v23416 = 5;
+                            if v1101.SuperSerious then
+                                v23416 = 55;
+                            end;
+                            for _, v23418 in pairs(v23414.Size.Keypoints) do
+                                table.insert(v23415, NumberSequenceKeypoint.new(v23418.Time, v23418.Value * math.clamp(v23410 / 4, 0.35, v23416), v23418.Envelope));
+                            end;
+                            v23414.Size = NumberSequence.new(v23415);
+                            local l_v23414_0 = v23414 --[[ copy: 22 -> 702 ]];
+                            task.delay(0, function() --[[ Line: 48134 ]]
+                                -- upvalues: v1101 (copy), l_v23414_0 (copy), v23404 (copy)
+                                if not v1101.NoParticles then
+                                    l_v23414_0:Emit(v23404(2, 3, true));
+                                end;
+                            end);
+                        end;
+                        local v23420 = v309() or Instance.new("Part");
+                        table.insert(v23396, v23420);
+                        v23420.Name = "Debris";
+                        v23420.Anchored = true;
+                        v23420.CanCollide = true;
+                        v23420.Transparency = 1;
+                        local v23421 = 0.75;
+                        local v23422 = 1;
+                        local v23423 = v23398 or v103;
+                        if not v23422 and v23421 then
+                            v23422 = v23421;
+                            v23421 = 1;
+                        end;
+                        if not v23422 and not v23421 then
+                            v23421 = 0;
+                            v23422 = 1;
+                        end;
+                        local v23424 = v23423:NextNumber(v23421, v23422);
+                        v23422 = 0.75;
+                        v23423 = 1;
+                        local v23425 = v23398 or v103;
+                        if not v23423 and v23422 then
+                            v23423 = v23422;
+                            v23422 = 1;
+                        end;
+                        if not v23423 and not v23422 then
+                            v23422 = 0;
+                            v23423 = 1;
+                        end;
+                        local v23426 = Vector3.new(v23424, v23425:NextNumber(v23422, v23423), v23404(0.75, 1));
+                        v23422 = 2;
+                        v23423 = 3;
+                        v23425 = v23398 or v103;
+                        if not v23423 and v23422 then
+                            v23423 = v23422;
+                            v23422 = 1;
+                        end;
+                        if not v23423 and not v23422 then
+                            v23422 = 0;
+                            v23423 = 1;
+                        end;
+                        v23420.Size = v23426 * (v23410 / v23425:NextNumber(v23422, v23423));
+                        v23426 = 3.75;
+                        v23424 = 4.25;
+                        v23421 = v23398 or v103;
+                        if not v23424 and v23426 then
+                            v23424 = v23426;
+                            v23426 = 1;
+                        end;
+                        if not v23424 and not v23426 then
+                            v23426 = 0;
+                            v23424 = 1;
+                        end;
+                        local v23427 = v23421:NextNumber(v23426, v23424);
+                        if v1101.SuperSerious then
+                            v23427 = v23427 * 3.5;
+                        end;
+                        v23420.CFrame = l_v23392_0 + l_v23392_0.lookVector * (v23410 * v23427);
+                        v23424 = 3;
+                        v23421 = 4;
+                        v23422 = v23398 or v103;
+                        if not v23421 and v23424 then
+                            v23421 = v23424;
+                            v23424 = 1;
+                        end;
+                        if not v23421 and not v23424 then
+                            v23424 = 0;
+                            v23421 = 1;
+                        end;
+                        v23426 = v23422:NextNumber(v23424, v23421);
+                        if v1101.SuperSerious then
+                            v23420.Size = v23420.Size * 8;
+                            v23426 = 1;
+                        end;
+                        v23420.CFrame = v23420.CFrame * CFrame.new(v23412 * (v23410 / v23426), 0, 0);
+                        if v23411 == 1 then
+                            v23420:SetAttribute("Multi", 1);
+                        else
+                            v23420:SetAttribute("Multi", -1);
+                        end;
+                        v23424, v23421 = v725({
+                            orig = v23420.Position, 
+                            dir = Vector3.new(0, -12, 0, 0)
+                        });
+                        v23422 = false;
+                        v23423 = false;
+                        if v23424 then
+                            v23422 = v23424.Material == Enum.Material.Sand;
+                            if v23424 == workspace.Terrain then
+                                v23424 = {
+                                    Material = Enum.Material.Sand, 
+                                    Color = Color3.fromRGB(227, 206, 157), 
+                                    Transparency = 0
+                                };
+                            end;
+                        end;
+                        if not v23424 then
+                            v23420:Destroy();
+                        else
+                            v23425 = nil;
+                            if v1101.Serious then
+                                local v23428 = v309() or Instance.new("Part");
+                                local v23429 = 1;
+                                if v23411 == 2 then
+                                    v23429 = -1;
+                                end;
+                                table.insert(v23396, v23428);
+                                v23428.Name = "DebrisGg";
+                                v23428.Anchored = true;
+                                v23428.CanCollide = true;
+                                v23428.Transparency = 1;
+                                v23428.Size = Vector3.new(11.903400421142578, 7.30150032043457, 16.72545051574707, 0) * (v23410 / 20);
+                                local v23430 = 3.75;
+                                local v23431 = 4.25;
+                                local v23432 = v23398 or v103;
+                                if not v23431 and v23430 then
+                                    v23431 = v23430;
+                                    v23430 = 1;
+                                end;
+                                if not v23431 and not v23430 then
+                                    v23430 = 0;
+                                    v23431 = 1;
+                                end;
+                                local v23433 = v23432:NextNumber(v23430, v23431);
+                                if v1101.SuperSerious then
+                                    v23428.Size = v23428.Size * 8;
+                                    v23433 = v23433 * 3.5;
+                                end;
+                                v23431 = 1;
+                                v23432 = 2;
+                                local v23434 = v23398 or v103;
+                                if not v23432 and v23431 then
+                                    v23432 = v23431;
+                                    v23431 = 1;
+                                end;
+                                if not v23432 and not v23431 then
+                                    v23431 = 0;
+                                    v23432 = 1;
+                                end;
+                                v23430 = v23434:NextNumber(v23431, v23432);
+                                if v1101.SuperSerious then
+                                    v23430 = 0.35;
+                                end;
+                                v23434 = CFrame.Angles;
+                                local v23435 = -12;
+                                local v23436 = 12;
+                                local v23437 = v23398 or v103;
+                                if not v23436 and v23435 then
+                                    v23436 = v23435;
+                                    v23435 = 1;
+                                end;
+                                if not v23436 and not v23435 then
+                                    v23435 = 0;
+                                    v23436 = 1;
+                                end;
+                                local v23438 = math.rad((v23437:NextNumber(v23435, v23436)));
+                                v23436 = -14;
+                                v23437 = 14;
+                                local v23439 = v23398 or v103;
+                                if not v23437 and v23436 then
+                                    v23437 = v23436;
+                                    v23436 = 1;
+                                end;
+                                if not v23437 and not v23436 then
+                                    v23436 = 0;
+                                    v23437 = 1;
+                                end;
+                                local v23440 = math.rad((v23439:NextNumber(v23436, v23437)));
+                                v23439 = 25;
+                                local v23441 = 75;
+                                local v23442 = v23398 or v103;
+                                if not v23441 and v23439 then
+                                    v23441 = v23439;
+                                    v23439 = 1;
+                                end;
+                                if not v23441 and not v23439 then
+                                    v23439 = 0;
+                                    v23441 = 1;
+                                end;
+                                v23428.CFrame = l_v23392_0 * v23434(v23438, v23440, (math.rad(v23429 * v23442:NextNumber(v23439, v23441)))) + l_v23392_0.lookVector * (v23410 * v23433);
+                                v23428.CFrame = v23428.CFrame * CFrame.new(v23412 * (v23410 / v23430), 0, 0);
+                                v23428.Material = v23424.Material;
+                                v23428.Color = v23424.Color;
+                                v23428.Position = Vector3.new(v23428.Position.X, v23421.Y - v23428.Size.Y / 3, v23428.Position.Z);
+                                v23431 = v23428.CFrame;
+                                v23428.CFrame = v23428.CFrame - Vector3.new(0, 5, 0, 0);
+                                v23428.Transparency = 0;
+                                v23428.Parent = workspace.Thrown;
+                                v10:Create(v23428, TweenInfo.new(0.125, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
+                                    CFrame = v23431
+                                }):Play();
+                                v23432 = delay;
+                                v23438 = 6;
+                                v23440 = 7;
+                                v23435 = v23398 or v103;
+                                if not v23440 and v23438 then
+                                    v23440 = v23438;
+                                    v23438 = 1;
+                                end;
+                                if not v23440 and not v23438 then
+                                    v23438 = 0;
+                                    v23440 = 1;
+                                end;
+                                local l_v23428_0 = v23428 --[[ copy: 29 -> 701 ]];
+                                v23432(v23435:NextNumber(v23438, v23440), function() --[[ Line: 48235 ]]
+                                    -- upvalues: v10 (ref), l_v23428_0 (copy), v23398 (copy), v103 (ref)
+                                    local v23444 = 1;
+                                    v23444 = 5.5;
+                                    local l_v10_43 = v10;
+                                    local l_l_v23428_0_0 = l_v23428_0;
+                                    local v23447 = TweenInfo.new(v23444, Enum.EasingStyle.Quad, Enum.EasingDirection.In);
+                                    local v23448 = {};
+                                    local v23449 = l_v23428_0.CFrame - Vector3.new(0, l_v23428_0.Size.Y, 0);
+                                    local l_Angles_40 = CFrame.Angles;
+                                    local v23451 = -15;
+                                    local v23452 = 15;
+                                    local v23453 = v23398 or v103;
+                                    if not v23452 and v23451 then
+                                        v23452 = v23451;
+                                        v23451 = 1;
+                                    end;
+                                    if not v23452 and not v23451 then
+                                        v23451 = 0;
+                                        v23452 = 1;
+                                    end;
+                                    local v23454 = math.rad((v23453:NextNumber(v23451, v23452)));
+                                    v23452 = -15;
+                                    local v23455 = 15;
+                                    local v23456 = v23398 or v103;
+                                    if not v23455 and v23452 then
+                                        v23455 = v23452;
+                                        v23452 = 1;
+                                    end;
+                                    if not v23455 and not v23452 then
+                                        v23452 = 0;
+                                        v23455 = 1;
+                                    end;
+                                    local v23457 = math.rad((v23456:NextNumber(v23452, v23455)));
+                                    v23455 = -15;
+                                    v23453 = 15;
+                                    local v23458 = v23398 or v103;
+                                    if not v23453 and v23455 then
+                                        v23453 = v23455;
+                                        v23455 = 1;
+                                    end;
+                                    if not v23453 and not v23455 then
+                                        v23455 = 0;
+                                        v23453 = 1;
+                                    end;
+                                    v23448.CFrame = v23449 * l_Angles_40(v23454, v23457, (math.rad((v23458:NextNumber(v23455, v23453)))));
+                                    l_v10_43:Create(l_l_v23428_0_0, v23447, v23448):Play();
+                                    delay(v23444, function() --[[ Line: 48243 ]]
+                                        -- upvalues: l_v23428_0 (ref)
+                                        l_v23428_0:Destroy();
+                                    end);
+                                end);
+                            end;
+                            if (v23411 == 1 or v1101.Serious) and not v1101.SuperSerious then
+                                for _ = 1, 1 do
+                                    local v23460 = v309() or Instance.new("Part");
+                                    v23460.Name = "Debris";
+                                    table.insert(v23396, v23460);
+                                    v23460.Anchored = false;
+                                    v23460.CanCollide = false;
+                                    v23460.Transparency = 0;
+                                    local v23461 = 0.75;
+                                    local v23462 = 1;
+                                    local v23463 = v23398 or v103;
+                                    if not v23462 and v23461 then
+                                        v23462 = v23461;
+                                        v23461 = 1;
+                                    end;
+                                    if not v23462 and not v23461 then
+                                        v23461 = 0;
+                                        v23462 = 1;
+                                    end;
+                                    local v23464 = v23463:NextNumber(v23461, v23462);
+                                    v23462 = 0.75;
+                                    v23463 = 1;
+                                    local v23465 = v23398 or v103;
+                                    if not v23463 and v23462 then
+                                        v23463 = v23462;
+                                        v23462 = 1;
+                                    end;
+                                    if not v23463 and not v23462 then
+                                        v23462 = 0;
+                                        v23463 = 1;
+                                    end;
+                                    local v23466 = Vector3.new(v23464, v23465:NextNumber(v23462, v23463), v23404(0.75, 1));
+                                    v23462 = 5;
+                                    v23463 = 7;
+                                    v23465 = v23398 or v103;
+                                    if not v23463 and v23462 then
+                                        v23463 = v23462;
+                                        v23462 = 1;
+                                    end;
+                                    if not v23463 and not v23462 then
+                                        v23462 = 0;
+                                        v23463 = 1;
+                                    end;
+                                    v23460.Size = v23466 * (v23410 / v23465:NextNumber(v23462, v23463));
+                                    v23464 = l_v23392_0.lookVector;
+                                    v23463 = 3.75;
+                                    v23465 = 4.25;
+                                    local v23467 = v23398 or v103;
+                                    if not v23465 and v23463 then
+                                        v23465 = v23463;
+                                        v23463 = 1;
+                                    end;
+                                    if not v23465 and not v23463 then
+                                        v23463 = 0;
+                                        v23465 = 1;
+                                    end;
+                                    v23460.CFrame = l_v23392_0 + v23464 * (v23410 * v23467:NextNumber(v23463, v23465));
+                                    v23460.Position = Vector3.new(v23460.Position.X, v23421.Y, v23460.Position.Z);
+                                    v23425 = v23460.CFrame;
+                                    local l_CFrame_93 = v23460.CFrame;
+                                    v23464 = CFrame.new;
+                                    v23462 = v23412;
+                                    v23463 = -v23412;
+                                    v23465 = v23462;
+                                    v23467 = v23463;
+                                    local v23469 = v23398 or v103;
+                                    if not v23467 and v23465 then
+                                        v23467 = v23465;
+                                        v23465 = 1;
+                                    end;
+                                    if not v23467 and not v23465 then
+                                        v23465 = 0;
+                                        v23467 = 1;
+                                    end;
+                                    v23464 = v23464(v23469:NextNumber(v23465, v23467), 0, 0);
+                                    v23461 = CFrame.Angles;
+                                    v23465 = -360;
+                                    v23467 = 360;
+                                    v23469 = v23398 or v103;
+                                    if not v23467 and v23465 then
+                                        v23467 = v23465;
+                                        v23465 = 1;
+                                    end;
+                                    if not v23467 and not v23465 then
+                                        v23465 = 0;
+                                        v23467 = 1;
+                                    end;
+                                    v23462 = math.rad((v23469:NextNumber(v23465, v23467)));
+                                    v23467 = -360;
+                                    v23469 = 360;
+                                    local v23470 = v23398 or v103;
+                                    if not v23469 and v23467 then
+                                        v23469 = v23467;
+                                        v23467 = 1;
+                                    end;
+                                    if not v23469 and not v23467 then
+                                        v23467 = 0;
+                                        v23469 = 1;
+                                    end;
+                                    v23463 = math.rad((v23470:NextNumber(v23467, v23469)));
+                                    v23469 = -360;
+                                    v23470 = 360;
+                                    local v23471 = v23398 or v103;
+                                    if not v23470 and v23469 then
+                                        v23470 = v23469;
+                                        v23469 = 1;
+                                    end;
+                                    if not v23470 and not v23469 then
+                                        v23469 = 0;
+                                        v23470 = 1;
+                                    end;
+                                    v23460.CFrame = l_CFrame_93 * (v23464 * v23461(v23462, v23463, (math.rad((v23471:NextNumber(v23469, v23470))))));
+                                    v23420:SetAttribute("Original", v23425.p);
+                                    v23460.CollisionGroup = "nocol";
+                                    v23460.Color = v23424.Color;
+                                    v23460.Material = v23424.Material;
+                                    v23460.Parent = workspace.Thrown;
+                                    table.insert(v23394, {
+                                        v23460, 
+                                        v23425
+                                    });
+                                    game:service("Debris"):AddItem(v23460, 10);
+                                    l_CFrame_93 = Instance.new("BodyVelocity");
+                                    v23466 = 1;
+                                    if v1101.Serious then
+                                        v23466 = 3;
+                                        if math.random(1, 3) == 1 then
+                                            v23460.CanCollide = true;
+                                            if v23410 < 15 then
+                                                task.delay(0.85, function() --[[ Line: 48280 ]]
+                                                    -- upvalues: v23460 (copy), v725 (ref), v321 (ref)
+                                                    repeat
+                                                        task.wait();
+                                                    until not v23460.Parent or v725({
+                                                        orig = v23460.Position, 
+                                                        dir = Vector3.new(0, -3, 0, 0)
+                                                    });
+                                                    if v725({
+                                                        orig = v23460.Position, 
+                                                        dir = Vector3.new(0, -3, 0, 0)
+                                                    }) then
+                                                        v321({
+                                                            SoundId = ({
+                                                                "rbxassetid://3848076724", 
+                                                                "rbxassetid://3848078820"
+                                                            })[math.random(1, 2)], 
+                                                            Volume = 2, 
+                                                            PlaybackSpeed = 1.3, 
+                                                            Parent = v23460, 
+                                                            RollOffMaxDistance = 455
+                                                        }):Play();
+                                                    end;
+                                                end);
+                                            end;
+                                            task.delay(0.3, function() --[[ Line: 48307 ]]
+                                                -- upvalues: v321 (ref), l_Part_29 (copy)
+                                                v321({
+                                                    SoundId = "rbxassetid://7556019578", 
+                                                    Volume = 4, 
+                                                    Parent = l_Part_29, 
+                                                    RollOffMaxDistance = 455
+                                                }):Play();
+                                            end);
+                                            task.delay(5 + math.random(), function() --[[ Line: 48316 ]]
+                                                -- upvalues: v10 (ref), v23460 (copy)
+                                                v10:Create(v23460, TweenInfo.new(1, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {
+                                                    Transparency = 1
+                                                }):Play();
+                                            end);
+                                        end;
+                                    end;
+                                    l_CFrame_93.MaxForce = Vector3.new(40000, 40000, 40000, 0);
+                                    v23463 = -9;
+                                    v23465 = 9;
+                                    v23467 = v23398 or v103;
+                                    if not v23465 and v23463 then
+                                        v23465 = v23463;
+                                        v23463 = 1;
+                                    end;
+                                    if not v23465 and not v23463 then
+                                        v23463 = 0;
+                                        v23465 = 1;
+                                    end;
+                                    v23461 = v23467:NextNumber(v23463, v23465) * v23466;
+                                    v23465 = 10;
+                                    v23467 = 55;
+                                    v23469 = v23398 or v103;
+                                    if not v23467 and v23465 then
+                                        v23467 = v23465;
+                                        v23465 = 1;
+                                    end;
+                                    if not v23467 and not v23465 then
+                                        v23465 = 0;
+                                        v23467 = 1;
+                                    end;
+                                    v23462 = v23469:NextNumber(v23465, v23467) * v23466;
+                                    v23467 = -9;
+                                    v23469 = 9;
+                                    v23470 = v23398 or v103;
+                                    if not v23469 and v23467 then
+                                        v23469 = v23467;
+                                        v23467 = 1;
+                                    end;
+                                    if not v23469 and not v23467 then
+                                        v23467 = 0;
+                                        v23469 = 1;
+                                    end;
+                                    l_CFrame_93.Velocity = Vector3.new(v23461, v23462, v23470:NextNumber(v23467, v23469) * v23466);
+                                    l_CFrame_93.Parent = v23460;
+                                    game:service("Debris"):AddItem(l_CFrame_93, 0.15);
+                                end;
+                            end;
+                            v23420.Material = v23424.Material;
+                            v23420.Color = v23424.Color;
+                            v23420.Position = Vector3.new(v23420.Position.X, v23421.Y, v23420.Position.Z);
+                            local l_CFrame_94 = v23420.CFrame;
+                            local l_Angles_41 = CFrame.Angles;
+                            local v23474 = -360;
+                            local v23475 = 360;
+                            local v23476 = v23398 or v103;
+                            if not v23475 and v23474 then
+                                v23475 = v23474;
+                                v23474 = 1;
+                            end;
+                            if not v23475 and not v23474 then
+                                v23474 = 0;
+                                v23475 = 1;
+                            end;
+                            local v23477 = math.rad((v23476:NextNumber(v23474, v23475)));
+                            v23475 = -360;
+                            v23476 = 360;
+                            local v23478 = v23398 or v103;
+                            if not v23476 and v23475 then
+                                v23476 = v23475;
+                                v23475 = 1;
+                            end;
+                            if not v23476 and not v23475 then
+                                v23475 = 0;
+                                v23476 = 1;
+                            end;
+                            local v23479 = math.rad((v23478:NextNumber(v23475, v23476)));
+                            v23476 = -360;
+                            v23478 = 360;
+                            local v23480 = v23398 or v103;
+                            if not v23478 and v23476 then
+                                v23478 = v23476;
+                                v23476 = 1;
+                            end;
+                            if not v23478 and not v23476 then
+                                v23476 = 0;
+                                v23478 = 1;
+                            end;
+                            v23420.CFrame = l_CFrame_94 * l_Angles_41(v23477, v23479, (math.rad((v23480:NextNumber(v23476, v23478)))));
+                            l_CFrame_94 = v23420.CFrame;
+                            v23420.CFrame = v23420.CFrame - Vector3.new(0, 5, 0, 0);
+                            v23420.Transparency = 0;
+                            v23420.Parent = workspace.Thrown;
+                            v10:Create(v23420, TweenInfo.new(0.125, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
+                                CFrame = l_CFrame_94
+                            }):Play();
+                            l_Angles_41 = l_LegacyReplication_0.Smoke:Clone();
+                            v23477 = {};
+                            for _, v23482 in pairs(l_Angles_41.Size.Keypoints) do
+                                table.insert(v23477, NumberSequenceKeypoint.new(v23482.Time, v23482.Value * math.clamp(v23410 / 5, 1, 5), v23482.Envelope));
+                            end;
+                            l_Angles_41.ZOffset = l_Angles_41.ZOffset + 1;
+                            l_Angles_41.Color = ColorSequence.new(v23424.Color);
+                            l_Angles_41.Size = NumberSequence.new(v23477);
+                            l_Angles_41.Parent = v23420;
+                            task.delay(0.01, function() --[[ Line: 48353 ]]
+                                -- upvalues: l_Angles_41 (copy)
+                                l_Angles_41:Emit(2);
+                            end);
+                            v23479 = delay;
+                            v23475 = 6;
+                            v23476 = 7;
+                            v23478 = v23398 or v103;
+                            if not v23476 and v23475 then
+                                v23476 = v23475;
+                                v23475 = 1;
+                            end;
+                            if not v23476 and not v23475 then
+                                v23475 = 0;
+                                v23476 = 1;
+                            end;
+                            v23479(v23478:NextNumber(v23475, v23476), function() --[[ Line: 48357 ]]
+                                -- upvalues: v1101 (copy), v10 (ref), v23420 (copy), v23398 (copy), v103 (ref)
+                                local v23483 = 1;
+                                if v1101.Serious then
+                                    v23483 = 5.5;
+                                end;
+                                local l_v10_44 = v10;
+                                local l_v23420_0 = v23420;
+                                local v23486 = TweenInfo.new(v23483, Enum.EasingStyle.Quad, Enum.EasingDirection.In);
+                                local v23487 = {};
+                                local v23488 = v23420.CFrame - Vector3.new(0, v23420.Size.Y, 0);
+                                local l_Angles_42 = CFrame.Angles;
+                                local v23490 = -65;
+                                local v23491 = 65;
+                                local v23492 = v23398 or v103;
+                                if not v23491 and v23490 then
+                                    v23491 = v23490;
+                                    v23490 = 1;
+                                end;
+                                if not v23491 and not v23490 then
+                                    v23490 = 0;
+                                    v23491 = 1;
+                                end;
+                                local v23493 = math.rad((v23492:NextNumber(v23490, v23491)));
+                                v23491 = -65;
+                                local v23494 = 65;
+                                local v23495 = v23398 or v103;
+                                if not v23494 and v23491 then
+                                    v23494 = v23491;
+                                    v23491 = 1;
+                                end;
+                                if not v23494 and not v23491 then
+                                    v23491 = 0;
+                                    v23494 = 1;
+                                end;
+                                local v23496 = math.rad((v23495:NextNumber(v23491, v23494)));
+                                v23494 = -65;
+                                v23492 = 65;
+                                local v23497 = v23398 or v103;
+                                if not v23492 and v23494 then
+                                    v23492 = v23494;
+                                    v23494 = 1;
+                                end;
+                                if not v23492 and not v23494 then
+                                    v23494 = 0;
+                                    v23492 = 1;
+                                end;
+                                v23487.CFrame = v23488 * l_Angles_42(v23493, v23496, (math.rad((v23497:NextNumber(v23494, v23492)))));
+                                l_v10_44:Create(l_v23420_0, v23486, v23487):Play();
+                                delay(v23483, function() --[[ Line: 48367 ]]
+                                    -- upvalues: v23420 (ref)
+                                    v23420:Destroy();
+                                end);
+                            end);
+                        end;
+                    end;
+                    if not v1101.SuperSerious or v23410 % 2 == 0 then
+                        task.wait();
+                    end;
+                end;
