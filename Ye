@@ -1,0 +1,1225 @@
+local Player = game.Players.LocalPlayer
+local Character = Player.Character or Player.CharacterAdded:Wait()
+local Humanoid = Character:WaitForChild("Humanoid")
+local ANIM_ID = "rbxassetid://136087809701317"
+local Animation = Instance.new("Animation")
+Animation.AnimationId = ANIM_ID
+local Animator = Humanoid:FindFirstChildOfClass("Animator")
+if not Animator then
+    Animator = Instance.new("Animator")
+    Animator.Parent = Humanoid
+end
+local AnimTrack = Animator:LoadAnimation(Animation)
+AnimTrack.Looped = true
+game:GetService("RunService").RenderStepped:Connect(function()
+    local root = Character:FindFirstChild("HumanoidRootPart")
+    if root then
+        if root.Velocity.Magnitude < 0.1 then
+            if not AnimTrack.IsPlaying then
+                AnimTrack:Play()
+            end
+        else
+            if AnimTrack.IsPlaying then
+                AnimTrack:Stop()
+            end
+        end
+    end
+end)
+
+local Player = game.Players.LocalPlayer
+local Character = Player.Character or Player.CharacterAdded:Wait()
+local Humanoid = Character:WaitForChild("Humanoid")
+
+local RUN_ANIM_ID = "rbxassetid://121350640829746"
+local RunAnimation = Instance.new("Animation")
+RunAnimation.AnimationId = RUN_ANIM_ID
+
+local Animator = Humanoid:FindFirstChildOfClass("Animator")
+if not Animator then
+    Animator = Instance.new("Animator")
+    Animator.Parent = Humanoid
+end
+
+local RunAnimTrack = Animator:LoadAnimation(RunAnimation)
+RunAnimTrack.Priority = Enum.AnimationPriority.Action
+
+local MaxSpeed = 48
+
+game:GetService("RunService").RenderStepped:Connect(function()
+    local currentSpeed = Humanoid.MoveDirection.Magnitude * Humanoid.WalkSpeed
+    if currentSpeed > 0 then
+        if not RunAnimTrack.IsPlaying then
+            RunAnimTrack:Play()
+        end
+        RunAnimTrack:AdjustSpeed(math.clamp(currentSpeed / MaxSpeed, 0, 1))
+    else
+        if RunAnimTrack.IsPlaying then
+            RunAnimTrack:Stop()
+        end
+    end
+end)
+
+
+
+
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+local char = player.Character or player.CharacterAdded:Wait()
+local hrp = char:WaitForChild("HumanoidRootPart")
+
+local bodyTrailColor = ColorSequence.new(Color3.fromRGB(0, 255, 255))
+local electricTrails = {}
+
+local function createTrail(p0, p1)
+	if not (p0 and p1) then return end
+
+	local att0 = Instance.new("Attachment")
+	att0.Parent = p0
+
+	local att1 = Instance.new("Attachment")
+	att1.Parent = p1
+
+	local trail = Instance.new("Trail")
+	trail.Attachment0 = att0
+	trail.Attachment1 = att1
+	trail.Color = bodyTrailColor
+	trail.Lifetime = 0.2
+	trail.Transparency = NumberSequence.new(0.15)
+	trail.WidthScale = NumberSequence.new(0.35)
+	trail.LightEmission = 1
+	trail.Parent = hrp
+
+	table.insert(electricTrails, trail)
+	table.insert(electricTrails, att0)
+	table.insert(electricTrails, att1)
+end
+
+local function createElectricTrails()
+	-- connect across limbs instead of single part offsets
+	createTrail(char:FindFirstChild("Head"), hrp)
+
+	createTrail(char:FindFirstChild("Left Arm") or char:FindFirstChild("LeftUpperArm"), hrp)
+	createTrail(char:FindFirstChild("Right Arm") or char:FindFirstChild("RightUpperArm"), hrp)
+
+	createTrail(char:FindFirstChild("Left Leg") or char:FindFirstChild("LeftUpperLeg"), hrp)
+	createTrail(char:FindFirstChild("Right Leg") or char:FindFirstChild("RightUpperLeg"), hrp)
+end
+
+local function destroyElectricTrails()
+	for _, obj in pairs(electricTrails) do
+		if obj and obj.Parent then
+			obj:Destroy()
+		end
+	end
+	electricTrails = {}
+end
+
+-- call once
+createElectricTrails()
+
+task.spawn(function()
+    wait(1)
+
+end)
+
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+
+local function setupEffect(character)
+    local hrp = character:WaitForChild("HumanoidRootPart")
+    local humanoid = character:WaitForChild("Humanoid")
+    local Test = game.ReplicatedStorage.Resources.NinjaRun.Heavy_Effects.End.Root.Slash_Angled
+    local currentEffect
+
+    local function cloneEffect()
+        if currentEffect then
+            currentEffect:Destroy()
+        end
+        currentEffect = Test:Clone()
+        currentEffect.Parent = hrp
+        for _, child in ipairs(currentEffect:GetChildren()) do
+            if child:IsA("ParticleEmitter") then
+                child.Enabled = true
+            end
+        end
+    end
+
+    cloneEffect()
+
+    humanoid.Running:Connect(function(speed)
+        local moving = speed > 0
+        if currentEffect then
+            for _, child in ipairs(currentEffect:GetChildren()) do
+                if child:IsA("ParticleEmitter") then
+                    child.Enabled = not moving
+                end
+            end
+        end
+    end)
+end
+
+setupEffect(player.Character or player.CharacterAdded:Wait())
+
+player.CharacterAdded:Connect(function(char)
+    setupEffect(char)
+end)
+
+task.spawn(function()
+
+local player = game.Players.LocalPlayer
+
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "AngularMirageUI"
+ScreenGui.Parent = player:WaitForChild("PlayerGui")
+ScreenGui.ResetOnSpawn = false
+
+local frame = Instance.new("Frame")
+frame.Size = UDim2.new(0, 300, 0, 200)
+frame.Position = UDim2.new(0, 10, 1, -210) -- bottom-left corner
+frame.BackgroundTransparency = 1
+frame.Parent = ScreenGui
+
+local bg = Instance.new("ImageLabel")
+bg.Parent = frame
+bg.Image = "rbxassetid://6803353442"
+bg.BackgroundTransparency = 1
+bg.ImageTransparency = 0.95
+bg.ScaleType = Enum.ScaleType.Tile
+bg.TileSize = UDim2.new(0,10,0,10)
+bg.Size = UDim2.new(1,0,1,0)
+bg.Position = UDim2.new(0,0,0,0)
+
+local function createHolder(parent, posY, text)
+    local holder = Instance.new("Frame")
+    holder.Parent = parent
+    holder.Size = UDim2.new(0, 150, 0, 30)
+    holder.Position = UDim2.new(0, 10, 0, posY)
+    holder.BackgroundColor3 = Color3.fromRGB(33, 66, 132)
+    holder.BackgroundTransparency = 0.8
+    Instance.new("UICorner", holder)
+    local stroke = Instance.new("UIStroke", holder)
+    stroke.Color = Color3.fromRGB(33, 66, 132)
+    local label = Instance.new("TextLabel")
+    label.Parent = holder
+    label.Size = UDim2.new(1, 0, 1, 0)
+    label.BackgroundTransparency = 1
+    label.Text = text
+    label.TextColor3 = Color3.new(1,1,1)
+    label.TextScaled = true
+    label.Font = Enum.Font.RobotoMono
+    return holder, label
+end
+
+local SpeedHolder, SpeedLabel = createHolder(frame, 50, "SPS: 0")
+
+local ButtonHolder = Instance.new("Frame")
+ButtonHolder.Parent = frame
+ButtonHolder.Size = UDim2.new(0, 120, 0, 30)
+ButtonHolder.Position = UDim2.new(0, 10, 0, 10)
+ButtonHolder.BackgroundColor3 = Color3.fromRGB(33, 66, 132)
+ButtonHolder.BackgroundTransparency = 0.8
+Instance.new("UICorner", ButtonHolder)
+local buttonStroke = Instance.new("UIStroke", ButtonHolder)
+buttonStroke.Color = Color3.fromRGB(33, 66, 132)
+
+local Button = Instance.new("TextButton")
+Button.Parent = ButtonHolder
+Button.Size = UDim2.new(1, 0, 1, 0)
+Button.BackgroundTransparency = 1
+Button.Text = "Angular Mirage"
+Button.TextColor3 = Color3.new(1,1,1)
+Button.TextScaled = true
+Button.Font = Enum.Font.RobotoMono
+
+local isActive = false
+local conn
+local bv, bg, cam, hrp
+
+local function stopOrbit()
+    if bv then bv:Destroy() bv = nil end
+    if bg then bg:Destroy() bg = nil end
+    if cam then cam.CameraType = Enum.CameraType.Custom cam = nil end
+    if conn then conn:Disconnect() conn = nil end
+end
+
+local function startOrbit()
+    local player = game.Players.LocalPlayer
+    local character = player.Character or player.CharacterAdded:Wait()
+    hrp = character:WaitForChild("HumanoidRootPart")
+    cam = workspace.CurrentCamera
+
+    local radius = 10
+    local speed = 30000
+    local center = hrp.Position
+    local angle = 0
+    local camCFrame = cam.CFrame
+
+    cam.CameraType = Enum.CameraType.Scriptable
+
+    bv = Instance.new("BodyVelocity")
+    bv.MaxForce = Vector3.new(1e9, 0, 1e9)
+    bv.Parent = hrp
+
+    bg = Instance.new("BodyGyro")
+    bg.MaxTorque = Vector3.new(1e9, 1e9, 1e9)
+    bg.P = 1e6
+    bg.Parent = hrp
+
+    conn = game:GetService("RunService").Heartbeat:Connect(function(dt)
+        if not hrp or not hrp.Parent or not isActive then
+            stopOrbit()
+            return
+        end
+
+        -- Destroy all particles continuously
+        for _, part in ipairs(character:GetDescendants()) do
+            if part:IsA("ParticleEmitter") then
+                part:Destroy()
+            end
+        end
+
+        cam.CFrame = camCFrame
+        angle = angle + (speed / radius) * dt
+        local x = math.cos(angle) * radius
+        local z = math.sin(angle) * radius
+        local targetPos = Vector3.new(center.X + x, hrp.Position.Y, center.Z + z)
+        local tangent = Vector3.new(-math.sin(angle), 0, math.cos(angle))
+        hrp.CFrame = CFrame.new(targetPos, targetPos + tangent)
+        bv.Velocity = tangent * speed
+        bg.CFrame = CFrame.lookAt(hrp.Position, hrp.Position + tangent, Vector3.new(0, 1, 0))
+    end)
+end
+
+Button.MouseButton1Click:Connect(function()
+    isActive = not isActive
+    if isActive then
+        startOrbit()
+    else
+        stopOrbit()
+    end
+end)
+
+shared.resizeparticle = function(v848, v849, v850)
+    local v851 = v850 or "Size"
+    if v851 == "Speed" then
+        v848.Speed = NumberRange.new(v848.Speed.Min * v849, v848.Speed.Max * v849)
+    else
+        for _, v853 in pairs({v848}) do
+            local v854 = {}
+            for _, v856 in pairs(v853[v851].Keypoints) do
+                table.insert(v854, NumberSequenceKeypoint.new(v856.Time, v856.Value * v849, v856.Envelope))
+            end
+            v853[v851] = NumberSequence.new(v854)
+        end
+    end
+end
+
+local l_LocalPlayer_0 = game.Players.LocalPlayer
+local v1101 = {}
+v1101.char = l_LocalPlayer_0.Character or l_LocalPlayer_0.CharacterAdded:Wait()
+v1101.Hit = v1101.char
+v1101.hit = v1101.char
+v1101.Character = v1101.char
+v1101.Char = v1101.char
+v1101.Target = v1101.char
+
+local l_char_16 = v1101.char
+local l_PrimaryPart_25 = l_char_16.PrimaryPart
+local l_RootJoint_0 = l_PrimaryPart_25
+local l_Torso_7 = l_char_16:WaitForChild("HumanoidRootPart")
+local l_Bind_1 = v1101.Bind
+
+for _ = 1, 1 do
+    local l_l_char_16_0 = l_char_16
+    l_l_char_16_0.Archivable = true
+    local clone_char = l_l_char_16_0:Clone()
+    clone_char.Parent = workspace.Thrown
+
+    for _, v3870 in pairs(clone_char:GetDescendants()) do
+        if v3870:GetAttribute("EmoteProperty") then
+            v3870:Destroy()
+        end
+    end
+
+    local function _(v3871)
+        return Random.new():NextNumber(-v3871, v3871)
+    end
+
+    for _, v3874 in pairs(clone_char:GetDescendants()) do
+        if v3874:IsA("BasePart") then
+            v3874.CollisionGroup = "untouchable"
+            v3874.Transparency = math.clamp(0.8, v3874.Transparency, 2e9)
+            v3874.CanCollide = false
+            v3874.CanQuery = false
+            v3874.CanTouch = false
+            if v3874.Name:find("Head") then
+                v3874.Transparency = 1
+            end
+        elseif v3874:IsA("Sound") or v3874:IsA("Beam") or v3874:IsA("Trail") or v3874:IsA("Highlight") or v3874:IsA("BaseScript") or v3874:IsA("ParticleEmitter") or v3874:IsA("Fire") or v3874:IsA("Smoke") then
+            v3874:Destroy()
+        end
+    end
+
+    local v3875 = {}
+
+for _, v3877 in pairs({l_char_16, clone_char}) do
+    for _, v3879 in pairs({
+        "Left Leg","Right Leg","Left Arm","Right Arm","Torso","Head",
+        "LeftHand","RightHand","LeftLowerArm","RightLowerArm","LeftUpperArm","RightUpperArm",
+        "LeftFoot","RightFoot","LeftLowerLeg","RightLowerLeg","LeftUpperLeg","RightUpperLeg",
+        "UpperTorso","LowerTorso","Head"
+    }) do
+        local l_v3877_FirstChild_0 = v3877:FindFirstChild(v3879)
+        if l_v3877_FirstChild_0 then
+            for _, v3882 in pairs(game.ReplicatedStorage.Resources.Fast:GetChildren()) do
+                local v3883 = v3882:Clone()
+
+                    v3883.Parent = l_v3877_FirstChild_0
+                    if v3877 == l_char_16 then
+                        table.insert(v3875, v3883)
+                    else
+                        shared.resizeparticle(v3883, 2, "Transparency")
+                    end
+                end
+            end
+        end
+    end
+
+    clone_char.Name = ""
+    clone_char.Humanoid.DisplayName = ""
+end
+end)
+local dasher = game.ReplicatedStorage.Resources.CrabBeam.STart.dash.s1
+local player = game.Players.LocalPlayer
+local hrp = player.Character:WaitForChild("HumanoidRootPart")
+local HAHA
+
+local function StartFX()
+    HAHA = dasher:Clone()
+    HAHA.Parent = hrp
+
+    for _, child in ipairs(HAHA:GetChildren()) do
+        if child:IsA("ParticleEmitter") then
+            child.Color = ColorSequence.new(Color3.fromRGB(0, 255, 255)) -- cyan
+            child.Enabled = true
+        end
+    end
+end
+
+local function EndFX()
+    if HAHA then
+        for _, child in ipairs(HAHA:GetChildren()) do
+            if child:IsA("ParticleEmitter") then
+                child.Enabled = false
+            end
+        end
+        HAHA:Destroy()
+        HAHA = nil
+    end
+end
+
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local Debris = game:GetService("Debris")
+local TweenService = game:GetService("TweenService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local player = Players.LocalPlayer
+local char = player.Character or player.CharacterAdded:Wait()
+local humanoid = char:WaitForChild("Humanoid")
+local bindPart = char:WaitForChild("HumanoidRootPart")
+
+local effect, secondary
+local tweens = {}
+local ended = false
+local conn
+
+local function EndBeam()
+
+local Test = game.ReplicatedStorage.Resources.KJEffects.DropkickExtra.drag.Attachment
+
+local test = Test:Clone()
+test.Position = test.Position + Vector3.new(0, -3, 0)  -- move down 3 studs
+test.Parent = game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart")
+
+for _, child in ipairs(test:GetChildren()) do
+    if child:IsA("ParticleEmitter") then
+        child:Emit(15)
+        child.Enabled = false
+    end
+end
+
+    if ended then return end
+    ended = true
+
+    local tVal1 = Instance.new("NumberValue")
+    tVal1.Value = 0
+    local tVal2 = Instance.new("NumberValue")
+    tVal2.Value = 6
+
+    TweenService:Create(tVal1, TweenInfo.new(1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Value = 1}):Play()
+    TweenService:Create(tVal2, TweenInfo.new(2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Value = 0}):Play()
+
+    tVal1:GetPropertyChangedSignal("Value"):Connect(function()
+        if effect then
+            for _, beam in pairs(effect:GetDescendants()) do
+                if beam:IsA("Beam") then beam.Transparency = NumberSequence.new(tVal1.Value) end
+            end
+        end
+        if secondary then
+            for _, beam in pairs(secondary:GetDescendants()) do
+                if beam:IsA("Beam") then beam.Transparency = NumberSequence.new(tVal1.Value) end
+            end
+        end
+    end)
+
+    tVal2:GetPropertyChangedSignal("Value"):Connect(function()
+        if effect then
+            for _, beam in pairs(effect:GetDescendants()) do
+                if beam:IsA("Beam") then beam.TextureSpeed = tVal2.Value end
+            end
+        end
+        if secondary then
+            for _, beam in pairs(secondary:GetDescendants()) do
+                if beam:IsA("Beam") then beam.TextureSpeed = tVal2.Value end
+            end
+        end
+    end)
+
+    for _, tw in pairs(tweens) do
+        tw:Cancel()
+    end
+    tweens = {}
+
+    if effect then
+        Debris:AddItem(effect, 2)
+        task.delay(0.05, function()
+            for _, name in ipairs({"1111","2222","3333"}) do
+                local part = effect:FindFirstChild(name, true)
+                if part then part:Destroy() end
+            end
+        end)
+    end
+    if secondary then Debris:AddItem(secondary, 3) end
+
+    task.delay(0.9, function()
+        effect = nil
+        secondary = nil
+        ended = false
+    end)
+end
+
+local function StartEffect()
+    if effect then return end
+
+local Test = game.ReplicatedStorage.Resources.PinpointFinisher.GlintTime.Attachment
+
+local test = Test:Clone()
+test.Parent = game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart")
+
+for _, child in ipairs(test:GetChildren()) do
+    if child:IsA("ParticleEmitter") then
+        child.Enabled = false
+    end
+end
+
+    effect = ReplicatedStorage.Resources.KJEffects.speedlinesandstuff:Clone()
+    effect.Parent = workspace.Thrown
+    secondary = effect:FindFirstChild("thespeedthingunderultik")
+    tweens = {}
+    ended = false
+    for _, p in pairs(effect:GetDescendants()) do
+        if p:IsA("ParticleEmitter") and p ~= secondary then
+            local tw = TweenService:Create(p, TweenInfo.new(0.95, Enum.EasingStyle.Quart, Enum.EasingDirection.InOut), {Rate = 900})
+            tw:Play()
+            task.delay(0.95, function()
+                local tw2 = TweenService:Create(p, TweenInfo.new(3.75, Enum.EasingStyle.Linear), {Rate = 0})
+                tw2:Play()
+                table.insert(tweens, tw2)
+            end)
+        end
+    end
+    conn = RunService.RenderStepped:Connect(function()
+        if bindPart and bindPart.Parent and not ended then
+            effect.CFrame = bindPart:GetPivot() * CFrame.new(-0.819, 6.15, -102.915)
+            if secondary then
+                secondary.CFrame = bindPart:GetPivot() * CFrame.new(-0.019, -2.95, 23.185)
+            end
+        else
+            EndBeam()
+            if conn then conn:Disconnect() end
+        end
+    end)
+end
+
+humanoid.Running:Connect(function(speed)
+    if speed > 0 then
+        StartEffect()
+    else
+        EndBeam()
+    end
+end)
+
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local Debris = game:GetService("Debris")
+local player = Players.LocalPlayer
+local forwardDistance = 200
+local regularSpeed
+local bv
+local originalPos
+local camCFrame
+local enabled = false
+local cam = workspace.CurrentCamera
+local savedCFrame
+
+local character = player.Character or player.CharacterAdded:Wait()
+local root = character:WaitForChild("HumanoidRootPart")
+local humanoid = character:WaitForChild("Humanoid")
+
+local heartbeatConn
+local renderConn
+
+local function createGUI()
+    if player:FindFirstChild("PlayerGui") then
+        local existing = player.PlayerGui:FindFirstChild("SpeedMirageGUI")
+        if existing then existing:Destroy() end
+    end
+
+    regularSpeed = humanoid.WalkSpeed
+
+    local ScreenGui = Instance.new("ScreenGui")
+    ScreenGui.Name = "SpeedMirageGUI"
+    ScreenGui.Parent = player:WaitForChild("PlayerGui")
+    ScreenGui.ResetOnSpawn = false
+
+    local frame = Instance.new("Frame")
+    frame.Size = UDim2.new(0, 300, 0, 200)
+    frame.Position = UDim2.new(0, 10, 0, 10)
+    frame.BackgroundTransparency = 1
+    frame.Parent = ScreenGui
+
+    local bg = Instance.new("ImageLabel")
+    bg.Parent = frame
+    bg.Image = "rbxassetid://6803353442"
+    bg.BackgroundTransparency = 1
+    bg.ImageTransparency = 0.95
+    bg.ScaleType = Enum.ScaleType.Tile
+    bg.TileSize = UDim2.new(0,10,0,10)
+    bg.Size = UDim2.new(1,0,1,0)
+    bg.Position = UDim2.new(0,0,0,0)
+
+    local function createHolder(parent, posY, text)
+        local holder = Instance.new("Frame")
+        holder.Parent = parent
+        holder.Size = UDim2.new(0, 150, 0, 30)
+        holder.Position = UDim2.new(0, 10, 0, posY)
+        holder.BackgroundColor3 = Color3.fromRGB(33, 66, 132)
+        holder.BackgroundTransparency = 0.8
+        Instance.new("UICorner", holder)
+        local stroke = Instance.new("UIStroke", holder)
+        stroke.Color = Color3.fromRGB(33, 66, 132)
+        local label = Instance.new("TextLabel")
+        label.Parent = holder
+        label.Size = UDim2.new(1, 0, 1, 0)
+        label.BackgroundTransparency = 1
+        label.Text = text
+        label.TextColor3 = Color3.new(1,1,1)
+        label.TextScaled = true
+        label.Font = Enum.Font.RobotoMono
+        return holder, label
+    end
+
+    local SpeedHolder, SpeedLabel = createHolder(frame, 50, "SPS: 0")
+
+    local ButtonHolder = Instance.new("Frame")
+    ButtonHolder.Parent = frame
+    ButtonHolder.Size = UDim2.new(0, 120, 0, 30)
+    ButtonHolder.Position = UDim2.new(0, 10, 0, 10)
+    ButtonHolder.BackgroundColor3 = Color3.fromRGB(33, 66, 132)
+    ButtonHolder.BackgroundTransparency = 0.8
+    Instance.new("UICorner", ButtonHolder)
+    local buttonStroke = Instance.new("UIStroke", ButtonHolder)
+    buttonStroke.Color = Color3.fromRGB(33, 66, 132)
+
+    local Button = Instance.new("TextButton")
+    Button.Parent = ButtonHolder
+    Button.Size = UDim2.new(1, 0, 1, 0)
+    Button.BackgroundTransparency = 1
+    Button.Text = "Speed Mirage"
+    Button.TextColor3 = Color3.new(1,1,1)
+    Button.TextScaled = true
+    Button.Font = Enum.Font.RobotoMono
+
+    local ChangeSpeedHolder = Instance.new("Frame")
+    ChangeSpeedHolder.Parent = frame
+    ChangeSpeedHolder.Size = UDim2.new(0, 150, 0, 30)
+    ChangeSpeedHolder.Position = UDim2.new(0, 170, 0, 10)
+    ChangeSpeedHolder.BackgroundColor3 = Color3.fromRGB(33, 66, 132)
+    ChangeSpeedHolder.BackgroundTransparency = 0.8
+    Instance.new("UICorner", ChangeSpeedHolder)
+    local changeStroke = Instance.new("UIStroke", ChangeSpeedHolder)
+    changeStroke.Color = Color3.fromRGB(33, 66, 132)
+
+    local ChangeSpeedBox = Instance.new("TextBox")
+    ChangeSpeedBox.Parent = ChangeSpeedHolder
+    ChangeSpeedBox.Size = UDim2.new(1, 0, 1, 0)
+    ChangeSpeedBox.BackgroundTransparency = 1
+    ChangeSpeedBox.Text = "Change Speed"
+    ChangeSpeedBox.TextTransparency = 0.5
+    ChangeSpeedBox.TextColor3 = Color3.new(1,1,1)
+    ChangeSpeedBox.TextScaled = true
+    ChangeSpeedBox.Font = Enum.Font.RobotoMono
+    ChangeSpeedBox.ClearTextOnFocus = true
+
+    ChangeSpeedBox:GetPropertyChangedSignal("Text"):Connect(function()
+        if ChangeSpeedBox.Text == "" then
+            ChangeSpeedBox.TextTransparency = 0.5
+        else
+            ChangeSpeedBox.TextTransparency = 0
+        end
+    end)
+
+    local function SpeedMirageToggle(state)
+        enabled = state
+        if enabled then
+            cam.CameraType = Enum.CameraType.Scriptable
+            camCFrame = cam.CFrame
+            originalPos = root.Position
+            bv = Instance.new("BodyVelocity")
+            bv.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
+            bv.Velocity = Vector3.new(0,0,0)
+            bv.Parent = root
+        else
+            cam.CameraType = Enum.CameraType.Custom
+            if bv then bv:Destroy() bv=nil end
+            humanoid.WalkSpeed = regularSpeed
+            if humanoid.MoveDirection.Magnitude > 0 then
+task.spawn(function()
+
+local Player = game:GetService("Players").LocalPlayer
+local RunService = game:GetService("RunService")
+local TweenService = game:GetService("TweenService")
+local Camera = workspace.CurrentCamera
+
+local Blur = Instance.new("BlurEffect")
+Blur.Size = 25
+Blur.Parent = game.Lighting
+TweenService:Create(Blur, TweenInfo.new(1), {Size = 0}):Play()
+
+local ColorCorrection = Instance.new("ColorCorrectionEffect")
+ColorCorrection.Saturation = -0.5
+ColorCorrection.Contrast = 2
+ColorCorrection.Parent = game.Lighting
+TweenService:Create(ColorCorrection, TweenInfo.new(1.5), {Saturation = 0, Contrast = 0}):Play()
+
+local Gui = Instance.new("ScreenGui")
+Gui.IgnoreGuiInset = true
+Gui.Parent = Player:WaitForChild("PlayerGui")
+local Frame = Instance.new("Frame", Gui)
+Frame.Size = UDim2.fromScale(1, 1)
+Frame.BackgroundColor3 = Color3.new(1, 1, 1)
+Frame.BackgroundTransparency = 0
+TweenService:Create(Frame, TweenInfo.new(0.5), {BackgroundTransparency = 1}):Play()
+task.delay(0.5, function() Gui:Destroy() end)
+
+local Particle = Instance.new("ParticleEmitter")
+Particle.Texture = "rbxassetid://243660364"
+Particle.Color = ColorSequence.new(Color3.fromRGB(0, 162, 255))
+Particle.LightEmission = 0.7
+Particle.Size = NumberSequence.new({NumberSequenceKeypoint.new(0, 1), NumberSequenceKeypoint.new(1, 0)})
+Particle.Lifetime = NumberRange.new(0.3, 0.5)
+Particle.Rate = 100
+Particle.Speed = NumberRange.new(0, 0)
+Particle.VelocitySpread = 10
+Particle.EmissionDirection = Enum.NormalId.Back
+Particle.Parent = Player.Character and Player.Character:FindFirstChild("HumanoidRootPart")
+Particle.Enabled = true
+
+local StartTime = tick()
+local Duration = 4
+local MaxFOV = 125
+local NormalFOV = 70
+
+local connection
+connection = RunService.RenderStepped:Connect(function(delta)
+	local elapsed = tick() - StartTime
+	local progress = math.clamp(elapsed / Duration, 0, 1)
+	if progress >= 1 then
+		Camera.FieldOfView = Camera.FieldOfView + (NormalFOV - Camera.FieldOfView) * delta * 2
+	else
+		Camera.FieldOfView = Camera.FieldOfView + (MaxFOV - Camera.FieldOfView) * delta * 4
+	end
+	local shakeAmount = progress >= 1 and (1 - math.min((elapsed - Duration), 1)) or 1
+	Camera.CFrame = Camera.CFrame * CFrame.Angles(0, 0, math.rad(math.sin(tick() * 4) * 2 * shakeAmount))
+		* CFrame.new((math.random() - 0.5) * 2 * shakeAmount, (math.random() - 0.5) * 2 * shakeAmount, 0)
+		* CFrame.new(0, 0, -2 * shakeAmount)
+	if progress >= 2 then
+		connection:Disconnect()
+	end
+end)
+
+	sound:Play()
+	TweenService:Create(blur, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Size = 30}):Play()
+	TweenService:Create(colorCorrection, TweenInfo.new(0.3), {Brightness = -0.3, Contrast = 0.5, Saturation = -0.5}):Play()
+
+	task.wait(0.6)
+
+	TweenService:Create(blur, TweenInfo.new(1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Size = 0}):Play()
+	TweenService:Create(colorCorrection, TweenInfo.new(1), {Brightness = 0, Contrast = 0, Saturation = 0}):Play()
+end)
+                local boost = Instance.new("BodyVelocity")
+                boost.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
+                boost.Velocity = root.CFrame.LookVector * 200
+                boost.Parent = root
+                Debris:AddItem(boost,0.5)
+            end
+        end
+    end
+
+    Button.MouseButton1Click:Connect(function()
+        local sound = Instance.new("Sound")
+        sound.SoundId = "rbxassetid://6493287948"
+        sound.Volume = 3
+        sound.Parent = character:WaitForChild("HumanoidRootPart")
+        sound:Play()
+        SpeedMirageToggle(not enabled)
+    end)
+
+    local BoostHolder = Instance.new("Frame")
+    BoostHolder.Parent = frame
+    BoostHolder.Size = UDim2.new(0, 120, 0, 30)
+    BoostHolder.Position = UDim2.new(0, 150, 0, 50)
+    BoostHolder.BackgroundColor3 = Color3.fromRGB(33, 66, 132)
+    BoostHolder.BackgroundTransparency = 0.8
+    Instance.new("UICorner", BoostHolder)
+    local boostStroke = Instance.new("UIStroke", BoostHolder)
+    boostStroke.Color = Color3.fromRGB(33, 66, 132)
+
+    local BoostButton = Instance.new("TextButton")
+    BoostButton.Parent = BoostHolder
+    BoostButton.Size = UDim2.new(1, 0, 1, 0)
+    BoostButton.BackgroundTransparency = 1
+    BoostButton.Text = "Boost"
+    BoostButton.TextColor3 = Color3.new(1,1,1)
+    BoostButton.TextScaled = true
+    BoostButton.Font = Enum.Font.RobotoMono
+
+    BoostButton.MouseButton1Click:Connect(function()
+
+local Camera = workspace.CurrentCamera
+
+local Sound = Instance.new("Sound")
+Sound.SoundId = "rbxassetid://5801257793"
+Sound.Volume = 3
+Sound.PlaybackSpeed = 1
+Sound.Parent = Camera
+Sound:Play()
+
+        local boost = Instance.new("BodyVelocity")
+        boost.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
+        boost.Velocity = root.CFrame.LookVector * 10000
+        boost.Parent = root
+        Debris:AddItem(boost,0.5)
+    end)
+
+    local SaveHolder = Instance.new("Frame")
+    SaveHolder.Parent = frame
+    SaveHolder.Size = UDim2.new(0, 120, 0, 30)
+    SaveHolder.Position = UDim2.new(0, 10, 0, 90)
+    SaveHolder.BackgroundColor3 = Color3.fromRGB(33, 66, 132)
+    SaveHolder.BackgroundTransparency = 0.8
+    Instance.new("UICorner", SaveHolder)
+    local saveStroke = Instance.new("UIStroke", SaveHolder)
+    saveStroke.Color = Color3.fromRGB(33, 66, 132)
+
+    local SaveButton = Instance.new("TextButton")
+    SaveButton.Parent = SaveHolder
+    SaveButton.Size = UDim2.new(1, 0, 1, 0)
+    SaveButton.BackgroundTransparency = 1
+    SaveButton.Text = "Save Position"
+    SaveButton.TextColor3 = Color3.new(1,1,1)
+    SaveButton.TextScaled = true
+    SaveButton.Font = Enum.Font.RobotoMono
+
+    local LoadHolder = Instance.new("Frame")
+    LoadHolder.Parent = frame
+    LoadHolder.Size = UDim2.new(0, 120, 0, 30)
+    LoadHolder.Position = UDim2.new(0, 150, 0, 90)
+    LoadHolder.BackgroundColor3 = Color3.fromRGB(33, 66, 132)
+    LoadHolder.BackgroundTransparency = 0.8
+    Instance.new("UICorner", LoadHolder)
+    local loadStroke = Instance.new("UIStroke", LoadHolder)
+    loadStroke.Color = Color3.fromRGB(33, 66, 132)
+
+    local LoadButton = Instance.new("TextButton")
+    LoadButton.Parent = LoadHolder
+    LoadButton.Size = UDim2.new(1, 0, 1, 0)
+    LoadButton.BackgroundTransparency = 1
+    LoadButton.Text = "Load Position"
+    LoadButton.TextColor3 = Color3.new(1,1,1)
+    LoadButton.TextScaled = true
+    LoadButton.Font = Enum.Font.RobotoMono
+
+    SaveButton.MouseButton1Click:Connect(function()
+        savedCFrame = root.CFrame
+    end)
+
+    LoadButton.MouseButton1Click:Connect(function()
+        if savedCFrame then
+            root.CFrame = savedCFrame
+        end
+    end)
+
+    if heartbeatConn then heartbeatConn:Disconnect() end
+    if renderConn then renderConn:Disconnect() end
+
+    heartbeatConn = RunService.Heartbeat:Connect(function()
+        local val = tonumber(ChangeSpeedBox.Text)
+        if enabled then
+            humanoid.WalkSpeed = val or 300000
+            SpeedLabel.Text = "SPS: ∞"
+        else
+            humanoid.WalkSpeed = val or 30000000
+            local speed = math.floor(root.Velocity.Magnitude)
+            SpeedLabel.Text = "SPS: "..speed
+        end
+    end)
+
+    renderConn = RunService.RenderStepped:Connect(function()
+        if enabled and bv then
+            cam.CFrame = camCFrame
+            bv.Velocity = root.CFrame.LookVector * 3000
+            if (root.Position - originalPos).Magnitude >= forwardDistance then
+                root.CFrame = CFrame.new(originalPos)
+            end
+        end
+    end)
+end
+
+createGUI()
+player.CharacterAdded:Connect(function()
+end)
+local TweenService = game:GetService("TweenService")
+local Players = game:GetService("Players")
+
+local player = Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local humanoid = character:WaitForChild("Humanoid")
+local cam = workspace.CurrentCamera
+
+local blur = Instance.new("BlurEffect")
+blur.Size = 0
+blur.Parent = cam
+
+local colorCorrection = Instance.new("ColorCorrectionEffect")
+colorCorrection.Brightness = 0
+colorCorrection.Contrast = 0
+colorCorrection.Saturation = 0
+colorCorrection.Parent = cam
+
+local sound = Instance.new("Sound")
+sound.SoundId = "rbxassetid://10457021115"
+sound.Volume = 0
+sound.Parent = character:WaitForChild("HumanoidRootPart")
+
+local triggered = false
+
+local function playEffects()
+
+local Player = game.Players.LocalPlayer
+local Character = Player.Character or Player.CharacterAdded:Wait()
+local HRP = Character:WaitForChild("HumanoidRootPart")
+
+local Player = game:GetService("Players").LocalPlayer
+local RunService = game:GetService("RunService")
+local TweenService = game:GetService("TweenService")
+local Camera = workspace.CurrentCamera
+
+local Sound = Instance.new("Sound")
+Sound.SoundId = "rbxassetid://5801257793"
+Sound.Volume = 3
+Sound.PlaybackSpeed = 1
+Sound.Parent = Camera
+Sound:Play()
+
+local Blur = Instance.new("BlurEffect")
+Blur.Size = 25
+Blur.Parent = game.Lighting
+TweenService:Create(Blur, TweenInfo.new(1), {Size = 0}):Play()
+
+local ColorCorrection = Instance.new("ColorCorrectionEffect")
+ColorCorrection.Saturation = -0.5
+ColorCorrection.Contrast = 2
+ColorCorrection.Parent = game.Lighting
+TweenService:Create(ColorCorrection, TweenInfo.new(1.5), {Saturation = 0, Contrast = 0}):Play()
+
+local Gui = Instance.new("ScreenGui")
+Gui.IgnoreGuiInset = true
+Gui.Parent = Player:WaitForChild("PlayerGui")
+local Frame = Instance.new("Frame", Gui)
+Frame.Size = UDim2.fromScale(1, 1)
+Frame.BackgroundColor3 = Color3.new(1, 1, 1)
+Frame.BackgroundTransparency = 0
+TweenService:Create(Frame, TweenInfo.new(0.5), {BackgroundTransparency = 1}):Play()
+task.delay(0.5, function() Gui:Destroy() end)
+
+local Particle = Instance.new("ParticleEmitter")
+Particle.Texture = "rbxassetid://243660364"
+Particle.Color = ColorSequence.new(Color3.fromRGB(0, 162, 255))
+Particle.LightEmission = 0.7
+Particle.Size = NumberSequence.new({NumberSequenceKeypoint.new(0, 1), NumberSequenceKeypoint.new(1, 0)})
+Particle.Lifetime = NumberRange.new(0.3, 0.5)
+Particle.Rate = 100
+Particle.Speed = NumberRange.new(0, 0)
+Particle.VelocitySpread = 10
+Particle.EmissionDirection = Enum.NormalId.Back
+Particle.Parent = Player.Character and Player.Character:FindFirstChild("HumanoidRootPart")
+Particle.Enabled = true
+
+local StartTime = tick()
+local Duration = 4
+local MaxFOV = 125
+local NormalFOV = 70
+
+local connection
+connection = RunService.RenderStepped:Connect(function(delta)
+	local elapsed = tick() - StartTime
+	local progress = math.clamp(elapsed / Duration, 0, 1)
+	if progress >= 1 then
+		Camera.FieldOfView = Camera.FieldOfView + (NormalFOV - Camera.FieldOfView) * delta * 2
+	else
+		Camera.FieldOfView = Camera.FieldOfView + (MaxFOV - Camera.FieldOfView) * delta * 4
+	end
+	local shakeAmount = progress >= 1 and (1 - math.min((elapsed - Duration), 1)) or 1
+	Camera.CFrame = Camera.CFrame * CFrame.Angles(0, 0, math.rad(math.sin(tick() * 4) * 2 * shakeAmount))
+		* CFrame.new((math.random() - 0.5) * 2 * shakeAmount, (math.random() - 0.5) * 2 * shakeAmount, 0)
+		* CFrame.new(0, 0, -2 * shakeAmount)
+	if progress >= 2 then
+		connection:Disconnect()
+	end
+end)
+
+	sound:Play()
+	TweenService:Create(blur, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Size = 30}):Play()
+	TweenService:Create(colorCorrection, TweenInfo.new(0.3), {Brightness = -0.3, Contrast = 0.5, Saturation = -0.5}):Play()
+
+	task.wait(0.6)
+
+	TweenService:Create(blur, TweenInfo.new(1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Size = 0}):Play()
+	TweenService:Create(colorCorrection, TweenInfo.new(1), {Brightness = 0, Contrast = 0, Saturation = 0}):Play()
+end
+
+humanoid.Running:Connect(function(speed)
+	if speed >= 4000 then
+		if not triggered then
+			triggered = true
+			playEffects()
+		end
+	else
+		triggered = false
+	end
+end)
+
+local Lighting = game:GetService("Lighting")
+local Workspace = game:GetService("Workspace")
+local Players = game:GetService("Players")
+local l_LocalPlayer_0 = Players.LocalPlayer
+local v2 = l_LocalPlayer_0.Character or l_LocalPlayer_0.CharacterAdded:Wait()
+
+task.delay(0.5, function()
+    if not Lighting:FindFirstChild("Atmosphere") then
+        local atmosphere = Instance.new("Atmosphere")
+        atmosphere.Parent = Lighting
+    end
+    Lighting.Atmosphere.Density = 0.213
+end)
+
+local l_Humanoid_0 = v2.Humanoid
+local l_HumanoidRootPart_0 = v2.HumanoidRootPart
+local l_Head_0 = v2.Head
+
+local function _(v28, v29, v30)
+    return v28 + (v29 - v28) * v30
+end
+
+local function v33()
+    local fromRGB = Color3.fromRGB
+    Lighting.Ambient = fromRGB(138, 138, 138)
+    Lighting.Brightness = 2
+    Lighting.ColorShift_Bottom = fromRGB(53, 53, 53)
+    Lighting.ColorShift_Top = fromRGB(90, 90, 90)
+    Lighting.EnvironmentDiffuseScale = 0
+    Lighting.EnvironmentSpecularScale = 0
+    Lighting.GlobalShadows = true
+    Lighting.OutdoorAmbient = fromRGB(128, 128, 128)
+    Lighting.ClockTime = 12.302
+    Lighting.GeographicLatitude = -0.41
+    Lighting.ShadowSoftness = 0.2
+    Lighting.ExposureCompensation = 0
+end
+
+v33()
+
+local Sky = Lighting:FindFirstChildOfClass("Sky") or Instance.new("Sky", Lighting)
+Sky.SkyboxUp = "http://www.roblox.com/asset/?id=91458002"
+Sky.MoonTextureId = "rbxassetid://106784196573850"
+Sky.SkyboxBk = "http://www.roblox.com/asset/?id=91458024"
+Sky.SkyboxLf = "http://www.roblox.com/asset/?id=91458024"
+Sky.SkyboxFt = "http://www.roblox.com/asset/?id=91458024"
+Sky.SunTextureId = "rbxasset://sky/sun.jpg"
+Sky.SunAngularSize = 9
+Sky.SkyboxDn = "http://www.roblox.com/asset/?id=91457980"
+Sky.SkyboxRt = "http://www.roblox.com/asset/?id=91458024"
+Sky.MoonAngularSize = 25
+
+if Workspace.Terrain then
+    local Clouds = Workspace.Terrain:FindFirstChildOfClass("Clouds")
+    if Clouds then
+        Clouds:Destroy()
+    end
+    Clouds = Instance.new("Clouds", Workspace.Terrain)
+    Clouds.Cover = 0.7139999866485596
+    Clouds.Density = 0.2930000126361847
+end
+
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local humanoid = character:WaitForChild("Humanoid")
+local soundOnce = Instance.new("Sound")
+soundOnce.SoundId = "rbxassetid://2674547670"
+soundOnce.Volume = 3
+soundOnce.Parent = character:WaitForChild("HumanoidRootPart")
+local soundLoop = Instance.new("Sound")
+soundLoop.SoundId = "rbxassetid://9225850470"
+soundLoop.Volume = 3
+soundLoop.Looped = true
+soundLoop.Parent = character:WaitForChild("HumanoidRootPart")
+local triggered = false
+humanoid.Running:Connect(function(speed)
+    if speed == 4000 and not triggered then
+        triggered = true
+        soundOnce:Play()
+        soundLoop:Play()
+    elseif speed < 4000 and triggered then
+        triggered = false
+        soundLoop:Stop()
+    end
+end)
+
+local Player = game.Players.LocalPlayer
+local PlayerGui = Player:WaitForChild("PlayerGui")
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Parent = PlayerGui
+ScreenGui.Name = "PhaseGui"
+
+local PhaseHolder = Instance.new("Frame")
+PhaseHolder.Parent = ScreenGui
+PhaseHolder.Size = UDim2.new(0, 150, 0, 40)
+PhaseHolder.Position = UDim2.new(1, -160, 0, 10)
+PhaseHolder.BackgroundColor3 = Color3.fromRGB(33, 66, 132)
+PhaseHolder.BackgroundTransparency = 0.2
+Instance.new("UICorner", PhaseHolder)
+local phaseStroke = Instance.new("UIStroke", PhaseHolder)
+phaseStroke.Color = Color3.fromRGB(33, 66, 132)
+
+local PhaseButton = Instance.new("TextButton")
+PhaseButton.Parent = PhaseHolder
+PhaseButton.Size = UDim2.new(1, 0, 1, 0)
+PhaseButton.BackgroundTransparency = 1
+PhaseButton.Text = "Phase"
+PhaseButton.TextColor3 = Color3.new(1,1,1)
+PhaseButton.TextScaled = true
+PhaseButton.Font = Enum.Font.RobotoMono
+
+local phasing = false
+local PhaseSound
+local AnimationTrack
+local ANIM_ID = "rbxassetid://103773704381789"
+
+PhaseButton.MouseButton1Click:Connect(function()
+    local Character = Player.Character or Player.CharacterAdded:Wait()
+    local Humanoid = Character:WaitForChild("Humanoid")
+    local HRP = Character:WaitForChild("HumanoidRootPart")
+    phasing = not phasing
+    if phasing then
+        PhaseSound = Instance.new("Sound")
+        PhaseSound.SoundId = "rbxassetid://4945948331"
+        PhaseSound.Volume = 2
+        PhaseSound.Looped = true
+        PhaseSound.Parent = HRP
+        PhaseSound:Play()
+        for _, part in pairs(Character:GetDescendants()) do
+            if part:IsA("BasePart") then
+                part.Transparency = 0.3
+                part.CanCollide = false
+            end
+        end
+        HRP.Transparency = 1
+        local Animator = Humanoid:FindFirstChildOfClass("Animator")
+        if not Animator then
+            Animator = Instance.new("Animator")
+            Animator.Parent = Humanoid
+        end
+        local Animation = Instance.new("Animation")
+        Animation.AnimationId = ANIM_ID
+        AnimationTrack = Animator:LoadAnimation(Animation)
+        AnimationTrack.Looped = true
+        AnimationTrack:Play()
+    else
+        if AnimationTrack then
+            AnimationTrack:Stop()
+            AnimationTrack:Destroy()
+            AnimationTrack = nil
+        end
+        if PhaseSound then
+            PhaseSound:Stop()
+            PhaseSound:Destroy()
+        end
+        for _, part in pairs(Character:GetDescendants()) do
+            if part:IsA("BasePart") then
+                part.CanCollide = true
+                part.Transparency = 0
+            end
+        end
+        HRP.Transparency = 1
+    end
+end)
+
+
+-- SuperLaunch Button
+
+
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+
+local function setupRunningSound(character)
+    local humanoid = character:WaitForChild("Humanoid")
+    local rootPart = character:FindFirstChild("HumanoidRootPart") or character.PrimaryPart
+    local runSound = Instance.new("Sound")
+    runSound.SoundId = "rbxassetid://4944377949"
+    runSound.Volume = 0.3
+    runSound.Looped = true
+    runSound.Parent = rootPart
+
+    spawn(function()
+        while humanoid.Parent do
+            if humanoid.MoveDirection.Magnitude > 0 then
+                if not runSound.IsPlaying then
+                    runSound:Play()
+                end
+            else
+                if runSound.IsPlaying then
+                    runSound:Stop()
+                end
+            end
+            wait(0.1)
+        end
+    end)
+end
+
+if player.Character then
+    setupRunningSound(player.Character)
+end
+player.CharacterAdded:Connect(setupRunningSound)
