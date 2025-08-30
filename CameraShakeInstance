@@ -1,0 +1,104 @@
+local CameraShakeInstance = {}
+CameraShakeInstance.__index = CameraShakeInstance
+
+local ZERO_VECTOR3 = Vector3.new()
+CameraShakeInstance.CameraShakeState = {
+	FadingIn = 0,
+	FadingOut = 1,
+	Sustained = 2,
+	Inactive = 3,
+}
+
+function CameraShakeInstance.new(magnitude, roughness, fadeInTime, fadeOutTime)
+	magnitude = magnitude or 0
+	roughness = roughness or 0
+	fadeInTime = fadeInTime or 0
+	fadeOutTime = fadeOutTime or 0
+
+	assert(type(magnitude) == "number", "Magnitude must be a number")
+	assert(type(roughness) == "number", "Roughness must be a number")
+	assert(type(fadeInTime) == "number", "FadeInTime must be a number")
+	assert(type(fadeOutTime) == "number", "FadeOutTime must be a number")
+
+	local self = setmetatable({}, CameraShakeInstance)
+	self.Magnitude = magnitude
+	self.Roughness = roughness
+	self.PositionInfluence = ZERO_VECTOR3
+	self.RotationInfluence = ZERO_VECTOR3
+	self.DeleteOnInactive = true
+	self.roughMod = 1
+	self.magnMod = 1
+	self.fadeOutDuration = fadeOutTime
+	self.fadeInDuration = fadeInTime
+	self.sustain = fadeInTime > 0
+	self.currentFadeTime = 1
+	self.tick = Random.new():NextNumber(-100, 100)
+	self._camShakeInstance = true
+
+	return self
+end
+
+function CameraShakeInstance:UpdateShake(deltaTime)
+	local tick = self.tick
+	local fade = self.currentFadeTime or 1
+
+	if self.fadeInDuration > 0 and self.sustain then
+		fade = math.min(1, fade + deltaTime / self.fadeInDuration)
+	elseif not self.sustain then
+		fade = math.max(0, fade - deltaTime / self.fadeOutDuration)
+	end
+
+	if self.sustain then
+		self.tick = tick + deltaTime * self.Roughness * self.roughMod
+	else
+		self.tick = tick + deltaTime * self.Roughness * self.roughMod * fade
+	end
+
+	self.currentFadeTime = fade
+	return Vector3.new(
+		math.noise(tick, 0) * 0.5,
+		math.noise(0, tick) * 0.5,
+		math.noise(tick, tick) * 0.5
+	) * self.Magnitude * self.magnMod * fade
+end
+
+function CameraShakeInstance:StartFadeOut(duration)
+	if duration == 0 then self.currentFadeTime = 0 end
+	self.fadeOutDuration = duration
+	self.fadeInDuration = 0
+	self.sustain = false
+end
+
+function CameraShakeInstance:StartFadeIn(duration)
+	if duration == 0 then self.currentFadeTime = 1 end
+	self.fadeInDuration = duration or self.fadeInDuration
+	self.fadeOutDuration = 0
+	self.sustain = true
+end
+
+function CameraShakeInstance:GetScaleRoughness() return self.roughMod end
+function CameraShakeInstance:SetScaleRoughness(val) self.roughMod = val end
+function CameraShakeInstance:GetScaleMagnitude() return self.magnMod end
+function CameraShakeInstance:SetScaleMagnitude(val) self.magnMod = val end
+function CameraShakeInstance:GetNormalizedFadeTime() return self.currentFadeTime end
+
+function CameraShakeInstance:IsShaking()
+	return self.currentFadeTime > 0 or self.sustain
+end
+
+function CameraShakeInstance:IsFadingOut()
+	return not self.sustain and self.currentFadeTime > 0
+end
+
+function CameraShakeInstance:IsFadingIn()
+	return self.currentFadeTime < 1 and self.sustain and self.fadeInDuration > 0
+end
+
+function CameraShakeInstance:GetState()
+	if self:IsFadingIn() then return CameraShakeInstance.CameraShakeState.FadingIn end
+	if self:IsFadingOut() then return CameraShakeInstance.CameraShakeState.FadingOut end
+	if self:IsShaking() then return CameraShakeInstance.CameraShakeState.Sustained end
+	return CameraShakeInstance.CameraShakeState.Inactive
+end
+
+return CameraShakeInstance
