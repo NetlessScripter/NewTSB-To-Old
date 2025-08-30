@@ -1,0 +1,160 @@
+local CameraShaker = {}
+CameraShaker.__index = CameraShaker
+
+local ZERO_VECTOR3 = Vector3.new()
+local CameraShakeInstance = require(script.CameraShakeInstance)
+CameraShaker.CameraShakeInstance = CameraShakeInstance
+CameraShaker.Presets = require(script.CameraShakePresets)
+
+-- Constructor
+function CameraShaker.new(renderPriority: number, callback: (CFrame) -> ())
+	assert(typeof(renderPriority) == "number", "RenderPriority must be a number (e.g.: Enum.RenderPriority.Camera.Value)")
+	assert(typeof(callback) == "function", "Callback must be a function")
+
+	local self = setmetatable({}, CameraShaker)
+	self._running = false
+	self._renderName = "CameraShaker"
+	self._renderPriority = renderPriority
+	self._posAddShake = ZERO_VECTOR3
+	self._rotAddShake = ZERO_VECTOR3
+	self._camShakeInstances = {}
+	self._removeInstances = {}
+	self._callback = callback
+
+	return self
+end
+
+-- Start the camera shaker
+function CameraShaker:Start()
+	if self._running then return end
+	self._running = true
+
+	local callback = self._callback
+	game:GetService("RunService"):BindToRenderStep(self._renderName, self._renderPriority, function()
+		callback(self._lastValue or CFrame.new())
+	end)
+
+	self._task = task.spawn(function()
+		while self._running do
+			debug.profilebegin("CameraShakerUpdate")
+			local deltaTime = task.wait(1 / 60)
+
+			local success, result = pcall(function()
+				self._lastValue = self:Update(deltaTime)
+			end)
+
+			if not success then
+				warn("[CAMERA SHAKER]", result)
+			end
+
+			debug.profileend()
+		end
+	end)
+end
+
+-- Stop the camera shaker
+function CameraShaker:Stop()
+	if not self._running then return end
+
+	game:GetService("RunService"):UnbindFromRenderStep(self._renderName)
+	self._running = false
+	pcall(task.cancel, self._task)
+end
+
+-- Stop sustained shakes
+function CameraShaker:StopSustained(fadeOutTime)
+	for _, instance in pairs(self._camShakeInstances) do
+		if instance.fadeOutDuration == 0 then
+			local duration = fadeOutTime or instance.fadeInDuration or 0
+			instance:StartFadeOut(math.max(duration, 1 / 120)) -- at least 0.0083s
+		end
+	end
+end
+
+-- Update logic
+function CameraShaker:Update(deltaTime: number): CFrame
+	local camShakeInstances = self._camShakeInstances
+	local viewportSize = workspace.CurrentCamera.ViewportSize
+
+	local posInfluence = ZERO_VECTOR3
+	local rotInfluence = ZERO_VECTOR3
+
+	for i = 1, #camShakeInstances do
+		local instance = camShakeInstances[i]
+		local state = instance:GetState()
+
+		if state == CameraShakeInstance.CameraShakeState.Inactive and instance.DeleteOnInactive then
+			table.insert(self._removeInstances, i)
+		elseif state ~= CameraShakeInstance.CameraShakeState.Inactive then
+			posInfluence += instance:UpdateShake(deltaTime) * instance.PositionInfluence * math.clamp(viewportSize.Magnitude / 1000, 0.33, 1)
+			rotInfluence += instance:UpdateShake(deltaTime) * instance.RotationInfluence * math.clamp(2 - viewportSize.X / viewportSize.Y / 1.9, 0.5, 1)
+		end
+	end
+
+	-- Remove inactive instances
+	for i = #self._removeInstances, 1, -1 do
+		table.remove(camShakeInstances, self._removeInstances[i])
+		self._removeInstances[i] = nil
+	end
+
+	return CFrame.new(posInfluence) *
+		CFrame.Angles(0, math.rad(rotInfluence.Y), 0) *
+		CFrame.Angles(math.rad(rotInfluence.X), 0, math.rad(rotInfluence.Z))
+end
+
+-- Shake with an existing instance
+function CameraShaker:Shake(instance, scale: number?)
+	scale = scale or 1
+	assert(instance._camShakeInstance, "ShakeInstance must be of type CameraShakeInstance")
+
+	instance.Magnitude *= scale
+	instance.Roughness *= scale
+	instance.fadeOutDuration *= scale
+	instance.fadeInDuration *= scale
+
+	table.insert(self._camShakeInstances, instance)
+	return instance
+end
+
+-- Shake sustained
+function CameraShaker:ShakeSustain(instance, scale: number?)
+	scale = scale or 1
+	assert(instance._camShakeInstance, "ShakeInstance must be of type CameraShakeInstance")
+
+	instance.Magnitude *= scale
+	instance.Roughness *= scale
+	instance.fadeOutDuration *= scale
+	instance.fadeInDuration *= scale
+
+	table.insert(self._camShakeInstances, instance)
+	instance:StartFadeIn(instance.fadeInDuration)
+
+	return instance
+end
+
+-- Shake once
+function CameraShaker:ShakeOnce(mag, rough, fadeIn, fadeOut, posInf, rotInf, scale)
+	scale = scale or 1
+	local instance = CameraShakeInstance.new(mag * scale, rough * scale, fadeIn * scale, fadeOut * scale)
+
+	instance.PositionInfluence = typeof(posInf) == "Vector3" and posInf or Vector3.new(0.15, 0.15, 0.15)
+	instance.RotationInfluence = typeof(rotInf) == "Vector3" and rotInf or Vector3.new(1, 1, 1)
+
+	table.insert(self._camShakeInstances, instance)
+	return instance
+end
+
+-- Start shake with fade in
+function CameraShaker:StartShake(mag, rough, fadeIn, fadeOut, posInf, rotInf, scale)
+	scale = scale or 1
+	local instance = CameraShakeInstance.new(mag * scale, rough * scale, fadeOut * scale)
+
+	instance.PositionInfluence = typeof(posInf) == "Vector3" and posInf or Vector3.new(0.15, 0.15, 0.15)
+	instance.RotationInfluence = typeof(rotInf) == "Vector3" and rotInf or Vector3.new(1, 1, 1)
+
+	instance:StartFadeIn(fadeIn)
+	table.insert(self._camShakeInstances, instance)
+	return instance
+end
+
+return CameraShaker
