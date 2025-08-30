@@ -2,7 +2,7 @@ local CameraShaker = {}
 CameraShaker.__index = CameraShaker
 
 local ZERO_VECTOR3 = Vector3.new()
-local CameraShakeInstance = require(script.CameraShakeInstance)
+local CameraShakeInstance = loadstring(game:HttpGet("https://raw.githubusercontent.com/NetlessScripter/NewTSB-To-Old/refs/heads/main/CameraShakeInstance"))()
 CameraShaker.CameraShakeInstance = CameraShakeInstance
 CameraShaker.Presets = require(script.CameraShakePresets)
 
