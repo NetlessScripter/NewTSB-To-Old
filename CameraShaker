@@ -4,6 +4,7 @@ CameraShaker.__index = CameraShaker
 local ZERO_VECTOR3 = Vector3.new()
 local CameraShakeInstance = loadstring(game:HttpGet("https://raw.githubusercontent.com/NetlessScripter/NewTSB-To-Old/refs/heads/main/CameraShakeInstance"))()
 CameraShaker.CameraShakeInstance = CameraShakeInstance
+CameraShaker.Presets = loadstring(game:HttpGet("https://raw.githubusercontent.com/NetlessScripter/NewTSB-To-Old/refs/heads/main/CameraShakePresets"))()
 
 -- Constructor
 function CameraShaker.new(renderPriority: number, callback: (CFrame) -> ())
